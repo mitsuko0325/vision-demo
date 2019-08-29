@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Vision from './views/Vision.vue'
+import FaceAnnotation from './views/FaceAnnotation.vue'
+import Label from './views/Label.vue'
 
 import BootstrapVue from 'bootstrap-vue' // added
 import 'bootstrap/dist/css/bootstrap.css' // added
@@ -17,7 +19,11 @@ export default new Router({
     {
       path: '/',
       name: 'vision',
-      component: Vision
+      component: Vision,
+      children: [
+        {path: 'faceAnnotation', component: FaceAnnotation},
+        {path: 'label', component: Label},
+      ]
     },
     {
       path: '/about',
