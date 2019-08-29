@@ -9,20 +9,25 @@
     <div class="mt-3">
       <b-button variant="primary" @click="analyze">分析</b-button>
     </div>
-    <div class="mt-3" v-if="labelResult">
+    <div>
+      <b-button-group>
+        <b-button><router-link to="/faceAnnotation">faceAnnotation</router-link></b-button>
+        <b-button><router-link to="/label">label</router-link></b-button>
+        <b-button>Button 3</b-button>
+      </b-button-group>
+    </div>
+    <!-- propsにわたす値をパスによって分岐しないと -->
+    <router-view :result="result"></router-view>
+    <!-- ラベルと顔は別タブになる -->
+    <!-- <div class="mt-3" v-if="labelResult">
+      <div v-for="(lr, index) in labelResult" :key="lr.description">
+    </div>
       <h4>ラベル</h4>
-      <p v-for="lr in labelResult" :key="lr.description">
+      <p v-for="(lr, index) in labelResult" :key="lr.description">
+        {{`Face ${index}`}}
         {{lr.description}}
       </p>
-    </div>
-    <div class="mt-3" v-if="faceResult">
-      <h4>感情</h4>
-      <p>怒り:{{faceResult.angerLikelihood}}</p>
-      <p>嬉しさ:{{faceResult.joyLikelihood}}</p>
-      <p>悲しさ:{{faceResult.sorrowLikelihood}}</p>
-      <p>驚き:{{faceResult.surpriseLikelihood}}</p>
-      <h4>確度:{{faceResult.detectionConfidence * 100 }} %</h4>
-    </div>
+    </div> -->
   </div>
   
   
@@ -31,7 +36,6 @@
 <script>
 
 // Your GCP API_KEY
-const API_KEY = ""
 
 import axios from 'axios'
 import _ from 'lodash'
@@ -41,9 +45,8 @@ export default {
   data () {
     return {
       uploadedImage: null,
-      faceResult : null,
-      labelResult: null,
-      faceRequest: {
+      result: null,
+      request: {
         "requests":[
           {
             "image":{
@@ -52,27 +55,16 @@ export default {
             "features":[
               {
                 "type":"FACE_DETECTION",
-                "maxResults":1
-              }
-            ]
-          }
-        ]
-      },
-      labelRequest: {
-        "requests": [
-          {
-            "image": {
-              "content": null
-            },
-            "features": [
+                "maxResults": 50
+              },
               {
-                "type": "LABEL_DETECTION"
+                "type": "LABEL_DETECTION",
+                "maxResults": 50
               }
             ]
           }
         ]
       }
-
     }
   },
   methods:{
@@ -93,19 +85,11 @@ export default {
       // TODO:jpeg以外にも対応
       let replacedImage;
       replacedImage = img.replace("data:image/jpeg;base64,", "");
-      this.faceRequest.requests[0].image.content = replacedImage
-      this.labelRequest.requests[0].image.content = replacedImage
+      this.request.requests[0].image.content = replacedImage
 
-      // 顔認識リクエスト
-      axios.post(`https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`, this.faceRequest).then(response => {
-        this.faceResult = response.data.responses[0].faceAnnotations[0]
-      }).catch(error => {
-        console.log('error', error);
-      })
-
-      // ラベル認識リクエスト
-      axios.post(`https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`, this.labelRequest).then(response => {
-        this.labelResult = response.data.responses[0].labelAnnotations
+      axios.post(`https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`, this.request).then(response => {
+        this.result = response.data.responses[0]
+        console.log('レスポンス', response.data.responses[0])
       }).catch(error => {
         console.log('error', error);
       })
