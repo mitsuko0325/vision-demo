@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Vision from './views/Vision.vue'
-import FaceAnnotation from './views/FaceAnnotation.vue'
+import Face from './views/Face.vue'
 import Label from './views/Label.vue'
+import Objectvue from './views/Object.vue'
 
 import BootstrapVue from 'bootstrap-vue' // added
 import 'bootstrap/dist/css/bootstrap.css' // added
@@ -21,8 +22,9 @@ export default new Router({
       name: 'vision',
       component: Vision,
       children: [
-        {path: 'faceAnnotation', component: FaceAnnotation},
+        {path: 'face', component: Face},
         {path: 'label', component: Label},
+        {path: 'object', component: Objectvue}
       ]
     },
     {
