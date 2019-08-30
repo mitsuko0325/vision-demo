@@ -12,9 +12,9 @@
     <div class="mt-3">
       <b-spinner variant="primary" type="grow" label="Spinning" v-if="loading"></b-spinner>
       <b-button-group v-else-if="!loading && result">
-        <b-button variant="white" v-if="isFaceExists"><router-link to="face">Face</router-link></b-button>
-        <b-button variant="white" v-if="isLabelExists"><router-link to="label">Label</router-link></b-button>
-        <b-button variant="white" v-if="isObjectExists"><router-link to="object">Object</router-link></b-button>
+        <b-button variant="success" v-if="isFaceExists" @click="moveTo('face')">Face</b-button>
+        <b-button variant="success" v-if="isLabelExists" @click="moveTo('label')">Label</b-button>
+        <b-button variant="success" v-if="isObjectExists" @click="moveTo('object')">Object</b-button>
       </b-button-group>
     </div>
     <router-view :result="result" :img="uploadedImage"></router-view>
@@ -123,6 +123,9 @@ export default {
         console.log('error', error);
       })
     },
+    moveTo(to){
+      this.$router.push(to)
+    }
   },
 }
 </script>
