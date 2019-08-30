@@ -26,7 +26,7 @@
 <script>
 
 // Your GCP API_KEY
-const API_KEY = "AIzaSyAlPRV-yenylwnzGRSR1S3qztAT2HqiaQ0"
+const API_KEY = ""
 
 
 import axios from 'axios'
