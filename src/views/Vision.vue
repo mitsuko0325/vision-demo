@@ -4,7 +4,7 @@
     <b-alert show variant="danger" v-if="errMsg">エラー: {{errMsg}}</b-alert>
     <input type="file" accept="image/*" @change="onFileChange">
     <div class="mt-3">
-      <img v-if="uploadedImage" :src="uploadedImage" />
+      <img class="img" v-if="uploadedImage" :src="uploadedImage" />
     </div>
     <div class="mt-3">
       <b-button variant="primary" @click="analyze" v-if="uploadedImage && !result">分析</b-button>
@@ -26,7 +26,8 @@
 <script>
 
 // Your GCP API_KEY
-const API_KEY = ""
+const API_KEY = "AIzaSyAlPRV-yenylwnzGRSR1S3qztAT2HqiaQ0"
+
 
 import axios from 'axios'
 import _ from 'lodash'
@@ -147,8 +148,10 @@ a {
   color: #42b983;
 }
 
-yoko {
-  float: left;
+.img {
+  max-width: 300px;
+  max-height: 300px;
+
 }
 </style>
 
