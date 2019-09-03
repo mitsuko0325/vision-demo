@@ -55,10 +55,9 @@ export default {
 
 			const data = this.result.faceAnnotations
 
-			let rectData = []
+			let maxAndMinvertex = []
 			data.forEach(faceA => {
-				//calculateRectはMixinにある。
-				rectData.push(this.calculateRect(faceA.boundingPoly.vertices))
+				maxAndMinvertex.push(this.calculateMaxAndMinVertex(faceA.boundingPoly.vertices))
 			});
 
 			let image = new Image()
@@ -75,15 +74,14 @@ export default {
 				// widthはmaxX-minY heightはmaxY-minY
 				ctx.strokeStyle = '#75ff4f'
 				ctx.fillStyle = '#75ff4f'
-				ctx.lineWidth = 3
+				ctx.font = "15px serif";
+				ctx.textAlign = 'center'
+				ctx.lineWidth = 2
 
-				rectData.forEach((data, index)=>{
+				maxAndMinvertex.forEach((data, index)=>{
 					// 四角い枠をつける
 					ctx.strokeRect(data.minX, data.minY, data.maxX-data.minX, data.maxY-data.minY)
-					// 文字をつける
-					ctx.font = "18px serif";
-					ctx.textAlign = 'center'
-					console.log('HI', data)
+					// ラベルをつける
 					ctx.fillText(`Face:${index}`, (data.maxX + data.minX) / 2, data.maxY + 20 )
 				})
 			}

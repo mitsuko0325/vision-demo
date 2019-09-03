@@ -1,6 +1,6 @@
 export default {
    methods: {
-      calculateRect(points){
+      calculateMaxAndMinVertex(points){
          const maxXObject =  _.maxBy(points, (point)=>{
             return point.x
          })
