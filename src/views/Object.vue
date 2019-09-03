@@ -35,6 +35,8 @@ export default {
 			const canvas = document.getElementById("canvasInObject")
 			let ctx = canvas.getContext('2d')
 
+			const data = this.result.localizedObjectAnnotations
+
 			let image = new Image()
 			image.src = this.uploadedImage
 
@@ -42,7 +44,37 @@ export default {
 				// canvasにimgを描画
 				canvas.width = image.width
 				canvas.height = image.height
-				ctx.drawImage(image, 0, 0)
+				ctx.drawImage(image, 0, 0,image.width, image.height)
+
+				ctx.strokeStyle = '#75ff4f'
+				ctx.fillStyle = '#75ff4f'
+				ctx.font = "18px serif";
+				ctx.textAlign = 'center'
+				ctx.lineWidth = 2
+
+				// cf. https://stackoverflow.com/questions/53765913/object-localization-google-vision-api
+				for(let i = 0; i < data.length; i++){
+					let vertex = []
+					ctx.beginPath();
+					vertex.push(data[i].boundingPoly.normalizedVertices[0])
+					const startingPos = data[i].boundingPoly.normalizedVertices[0];
+					ctx.moveTo(startingPos.x * canvas.width, startingPos.y * canvas.height);
+					for(let j = 1; j < data[i].boundingPoly.normalizedVertices.length; j++){
+						vertex.push(data[i].boundingPoly.normalizedVertices[j])
+						let pos = data[i].boundingPoly.normalizedVertices[j];
+						ctx.lineTo(pos.x * canvas.width, pos.y * canvas.height);
+					}
+					ctx.lineTo(startingPos.x * canvas.width, startingPos.y * canvas.height);
+					ctx.stroke();
+
+					// TODO: Objectにラベルをつけたいが数が多いと重なって見えなくなるのでその辺考える
+					// let maxAndMinVertex = []
+					// maxAndMinVertex.push(this.calculateMaxAndMinVertex(vertex))
+					// maxAndMinVertex.forEach((vertex, index)=>{
+					// 	// ラベルをつける
+					// 	ctx.fillText(`${data[i].name}`, (vertex.maxX * canvas.width + vertex.minX  * canvas.height) / 2, vertex.maxY  * canvas.height + 20 )
+					// })
+				}
 			}
 		}
 	},
