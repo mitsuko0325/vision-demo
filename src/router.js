@@ -22,9 +22,9 @@ export default new Router({
       name: 'vision',
       component: Vision,
       children: [
-        {path: 'face', component: Face},
-        {path: 'label', component: Label},
-        {path: 'object', component: Objectvue}
+        {path: '/face', name: 'face', component: Face},
+        {path: '/label', name: 'label',  component: Label},
+        {path: '/object', name: 'object', component: Objectvue}
       ]
     },
     {

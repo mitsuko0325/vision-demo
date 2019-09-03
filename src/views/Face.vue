@@ -1,8 +1,8 @@
 <template>
-  <div class="mt-3 mb-3" v-if="result">
-	  <h5>Face</h5>
+	<div class="mt-3 mb-3" v-if="result">
+		<h5>Face</h5>
    	<div class="image-box mr-3">
-      	<img class="img" v-if="img && result" :src="img" />
+			<canvas id="canvasInFace" class="img"></canvas>
    	</div>
    	<div class="faceAnnotations">
     		<div class="mt-3">
@@ -23,10 +23,19 @@
 </template>
 
 <script>
+
+import Mixin from '@/mixins/mixin'
+
 export default {
-  name: 'FaceAnnotation',
-  props: ['result', 'img'],
-  methods: {
+	name: 'FaceAnnotation',
+	props: ['result', 'uploadedImage'],
+	mixins: [ Mixin ],
+	data(){
+		return {
+
+		}
+	},
+	methods: {
 	  changeLikeHoodTextToNumber(text){
 		  if (text==="VERY_UNLIKELY") {
 			  return 0
@@ -38,8 +47,54 @@ export default {
 		  else if (text==="VERY_LIKELY") {
 			  return 100
 		  }
-	  }
-  },
+	  },
+	  	drawImageAndBorder(){
+			if (!this.result || !this.uploadedImage) return
+			const canvas = document.getElementById("canvasInFace")
+			let ctx = canvas.getContext('2d')
+
+			const data = this.result.faceAnnotations
+
+			let rectData = []
+			data.forEach(faceA => {
+				//calculateRectはMixinにある。
+				rectData.push(this.calculateRect(faceA.boundingPoly.vertices))
+			});
+
+			let image = new Image()
+			image.src = this.uploadedImage
+
+			image.onload = ()=>{
+				// canvasにimgを描画
+				canvas.width = image.width
+				canvas.height = image.height
+				ctx.drawImage(image, 0, 0)
+
+				// canvasに四角形を描画
+				// 起点となる左上の点は(minX,maxY)
+				// widthはmaxX-minY heightはmaxY-minY
+				ctx.strokeStyle = '#75ff4f'
+				ctx.fillStyle = '#75ff4f'
+				ctx.lineWidth = 3
+
+				rectData.forEach((data, index)=>{
+					// 四角い枠をつける
+					ctx.strokeRect(data.minX, data.minY, data.maxX-data.minX, data.maxY-data.minY)
+					// 文字をつける
+					ctx.font = "18px serif";
+					ctx.textAlign = 'center'
+					console.log('HI', data)
+					ctx.fillText(`Face:${index}`, (data.maxX + data.minX) / 2, data.maxY + 20 )
+				})
+			}
+		}
+	},
+	mounted(){
+		this.drawImageAndBorder()
+	},
+	updated(){
+		this.drawImageAndBorder()
+	}
 }
 </script>
 
@@ -62,6 +117,5 @@ export default {
 .img {
    max-width: 300px;
    max-height: 300px;
-
 }
 </style>
